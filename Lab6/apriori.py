@@ -1,5 +1,5 @@
 import pandas as pd
-import itertools
+import itertools as it
 
 def checkSubset(subset,main):
     for ele in subset:
@@ -23,20 +23,17 @@ def initializeVariables(l,minsup,itemset,uniq,freq):
         itemset.append(transaction)  
     for value,count in uniq.items():
         if count>=minsup:
-            l.append(list(value))  
-    for item in l:
-        freq.append(l)  
+            l.append(list(value)) 
+    if l:
+        freq.append(l)
         
 def prune(c,l,k):
     remove=[]
     for index,c1 in enumerate(c):
-        ctemp = itertools.combinations(list(c1),k-1)
-        check=[]
-        for temp in ctemp:
-            check.append(list(temp))
+        ctemp = it.combinations(list(c1),k-1)
+        check=[list(temp) for temp in ctemp]
         for items in check:
             if checkSubset(items,l):
-                print(items)
                 if index not in remove:
                     remove.append(index)
     for index in remove:
@@ -47,13 +44,13 @@ def gen_candidate_itemsets(l,k):
     for i in range(0,len(l)-1):
         for j in range(i+1,len(l)):
             temp = list(set(l[i]+l[j]))
-            ctemp = list(itertools.combinations(temp,k))
+            ctemp = list(it.combinations(temp,k))
             if len(ctemp)>0:
                 for r in ctemp:
                     if r not in c:
                         r=list(r)
                         r.sort()
-                        c.append(list(r))
+                        c.append(r)
     for item in c:
         if item not in c1:
             c1.append(item)
@@ -69,7 +66,7 @@ def generate_frequent_itemsets(l,c):
     for value,count in support.items():
         if count>=minsup:
             l.append(list(value))
-    for item in l:
+    if l:
         freq.append(l)
     return freq
 

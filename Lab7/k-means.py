@@ -5,7 +5,6 @@ df=pd.read_excel('database.xlsx')
 dataset={}
 for index,row in df.iterrows():
     dataset[row['ID']]=[row['Height'],row['Weight']]
-print(dataset)
 
 def calcDistance(x1,y1,x2,y2):
     return math.sqrt((math.pow((x1-x2),2))+(math.pow((y2-y1),2)))
