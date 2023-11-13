@@ -1,0 +1,4 @@
+AvgLen,AvgWidth,AvgPLen,AvgPWidth,Species
+5.94,2.77,4.26,50.0,Iris-versicolor
+5.01,3.42,1.46,50.0,Iris-setosa
+6.59,2.97,5.55,50.0,Iris-virginica
