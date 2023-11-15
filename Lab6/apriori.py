@@ -36,6 +36,8 @@ def prune(c,l,k):
             if checkSubset(items,l):
                 if index not in remove:
                     remove.append(index)
+    remove.sort()
+    remove.reverse()
     for index in remove:
         c.pop(index)                
          
