@@ -17,11 +17,10 @@ def gen_candidate_set(l,k):
             temp = list(set(item1+item2))
             ctemp = list(it.combinations(temp,k))
             temp = [list(item) for item in ctemp]
-            if len(temp)>0:    
-                for itemset_list in temp:
-                    if itemset_list not in c:
-                        itemset_list.sort()
-                        c.append(itemset_list)
+            for itemset_list in temp:
+                if itemset_list not in c:
+                    itemset_list.sort()
+                    c.append(itemset_list)
     for items in c:
         if items not in c1:
             c1.append(items)
@@ -55,6 +54,26 @@ def gen_frequent_itemsets(c,df,minsup):
             l.append(list(item))
     return l
 
+def calculate_support(item,df):
+    sup=0
+    for index,row in df.iterrows():
+        transaction = row['Itemsets'].split(',')
+        if check_subset(item,transaction):
+            sup+=1
+    return sup
+
+def calculate_confidence(df,frequent_itemsets):
+    for item in frequent_itemsets:
+        if len(item)<2:
+            continue
+        print(f"\nRULES FOR {item}")
+        k = len(item)
+        for i in range(1,k):
+            combinations = list(it.combinations(item,i))
+            listcomb = [list(temp) for temp in combinations]
+            for comb in listcomb:
+                print(f"Confidence: {''.join(list(set(comb)))} -> {''.join(list(set(item)-set(comb)))} = {round(calculate_support(df=df,item=item)/calculate_support(df=df,item=comb),2)}")
+
 df = pd.read_excel('database.xlsx')
 df.index = df['TID']
 df.drop(['TID'],inplace=True,axis=1)
@@ -80,7 +99,7 @@ while len(l)!=0:
     prune(l,k,c)
     l=gen_frequent_itemsets(c,df,minsup)
     for item in l:
-        frequent_itemsets.append(l)
+        frequent_itemsets.append(item)
     k+=1
 c1=[]
 for item in frequent_itemsets:
@@ -88,3 +107,4 @@ for item in frequent_itemsets:
         c1.append(item)
 frequent_itemsets=c1
 print(frequent_itemsets)
+calculate_confidence(df,frequent_itemsets)

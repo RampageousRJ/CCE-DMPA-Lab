@@ -7,7 +7,7 @@ def checkSubset(subset,main):
             return False
     return True
 
-def initializeVariables(l,minsup,itemset,uniq,freq):
+def initializeVariables():
     df = pd.read_excel('database.xlsx')
     df.index=df['TID']
     df=df.drop('TID',axis=1)
@@ -25,7 +25,9 @@ def initializeVariables(l,minsup,itemset,uniq,freq):
         if count>=minsup:
             l.append(list(value)) 
     if l:
-        freq.append(l)
+        for item in l:        
+            freq.append(item)
+    return df
         
 def prune(c,l,k):
     remove=[]
@@ -69,14 +71,35 @@ def generate_frequent_itemsets(l,c):
         if count>=minsup:
             l.append(list(value))
     if l:
-        freq.append(l)
+        for item in l:        
+            freq.append(item)
     return freq
+                
+def calculate_support(df,item):
+    sup=0
+    for index,row in df.iterrows():
+        transaction = row['Itemsets'].split(',')
+        if checkSubset(item,transaction):
+            sup+=1
+    return sup
+
+def calculate_confidence(frequent_itemsets):
+    for item in frequent_itemsets:
+        if len(item)<2:
+            continue
+        print(f"\nRULES FOR {item}")
+        k = len(item)
+        for i in range(1,k):
+            combinations = list(it.combinations(item,i))
+            listcomb = [list(temp) for temp in combinations]
+            for comb in listcomb:
+                print(f"Confidence: {''.join(list(set(comb)))} -> {''.join(list(set(item)-set(comb)))} = {round(calculate_support(df,item=item)/calculate_support(df,item=comb),2)}")
 
 if __name__=='__main__':
     minsup=int(input("Enter minimum support: "))
     uniq={}
     l,freq,itemset=[],[],[]
-    initializeVariables(l,minsup,itemset,uniq,freq)
+    df = initializeVariables()
     length=len(l)
     k=2
     while len(l)!=0:
@@ -91,3 +114,5 @@ if __name__=='__main__':
             c1.append(item)
     freq=c1
     print(freq)
+    calculate_confidence(freq)
+    
